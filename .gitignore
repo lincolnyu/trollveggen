@@ -4,3 +4,6 @@
 
 /Trollveggen/obj/Debug
 *.suo
+/Trollveggen/bin/Debug/Trollveggen.dll
+/Trollveggen/bin/Debug/Trollveggen.pdb
+/Trollveggen/bin/Debug/Trollveggen.pri
