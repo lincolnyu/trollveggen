@@ -68,7 +68,7 @@ namespace Trollveggen
         ///  Unregisters all objects of the specified type
         /// </summary>
         /// <typeparam name="T">The type the object is of or implements</typeparam>
-        public static void ReleaseAll<T>()
+        public static void Release<T>()
         {
             lock (Registry)
             {
