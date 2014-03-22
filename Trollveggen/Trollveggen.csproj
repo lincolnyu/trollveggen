@@ -102,11 +102,18 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Folder Include="Messenger\" />
+    <Folder Include="Registry\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomFactory.cs" />
     <Compile Include="Factory.cs" />
+    <Compile Include="Helpers\TypeHelper.cs" />
+    <Compile Include="LocalCustomFactory.cs" />
+    <Compile Include="LocalFactory.cs" />
+    <Compile Include="LocalTypeSmartFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeSmartFactory.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

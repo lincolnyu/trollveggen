@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Trollveggen
+﻿namespace Trollveggen
 {
     /// <summary>
-    ///  The class that keeps the objects user has registered by their types user has specified
+    ///  The factory that keeps the objects user has registered by their types user has specified
     /// </summary>
-    public class Factory
+    public static class Factory
     {
         #region Fields
 
         /// <summary>
         ///  The dictionary that keeps all the objects
         /// </summary>
-        private static readonly Dictionary<Type, object> Registry = new Dictionary<Type, object>();
+        private static readonly LocalFactory LocalFactory = new LocalFactory();
 
         #endregion
 
@@ -26,15 +23,18 @@ namespace Trollveggen
         /// <returns>The object</returns>
         public static T Resolve<T>()
         {
-            lock (Registry)
-            {
-                if (!Registry.ContainsKey(typeof(T)))
-                {
-                    return default(T);
-                }
+            return LocalFactory.Resolve<T>();
+        }
 
-                return (T)Registry[typeof (T)];
-            }
+        /// <summary>
+        ///  Returns an object that is of specified and is after the specified item in the list of same kind
+        /// </summary>
+        /// <typeparam name="T">The type the object is of or implements</typeparam>
+        /// <param name="after">The registered object that the returned object should follow</param>
+        /// <returns>The object</returns>
+        public static T Resolve<T>(object after)
+        {
+            return LocalFactory.Resolve<T>(after);
         }
 
         /// <summary>
@@ -44,10 +44,17 @@ namespace Trollveggen
         /// <param name="obj">The object</param>
         public static void Register<T>(T obj)
         {
-            lock (Registry)
-            {
-                Registry[typeof(T)] = obj;
-            }
+            LocalFactory.Register(obj);
+        }
+
+        /// <summary>
+        ///  Register multiple item of the same declaring interface
+        /// </summary>
+        /// <typeparam name="T">The type the object is of or implements</typeparam>
+        /// <param name="obj">The object</param>
+        public static void MultiRegister<T>(T obj)
+        {
+            LocalFactory.MultiRegister(obj);
         }
 
         /// <summary>
@@ -56,10 +63,17 @@ namespace Trollveggen
         /// <typeparam name="T">The type the object is of or implements</typeparam>
         public static void Release<T>()
         {
-            lock (Registry)
-            {
-                Registry.Remove(typeof (T));
-            }
+            LocalFactory.Release<T>();
+        }
+
+        /// <summary>
+        ///  Release a specified object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        public static void Release<T>(T obj)
+        {
+            LocalFactory.Release(obj);
         }
 
         #endregion

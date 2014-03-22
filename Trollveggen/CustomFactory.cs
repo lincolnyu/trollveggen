@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Trollveggen
+﻿namespace Trollveggen
 {
     /// <summary>
-    ///  The class that keeps the objects user has registered by their types and keys user has specified
+    ///  The factory that keeps the objects user has registered by their types and keys user has specified
     /// </summary>
     public static class CustomFactory<TKey>
     {
@@ -13,8 +10,7 @@ namespace Trollveggen
         /// <summary>
         ///  The dictionary that keeps all the objects
         /// </summary>
-        private static readonly Dictionary<Type, Dictionary<TKey, object>> Registry
-            = new Dictionary<Type, Dictionary<TKey, object>>();
+        private static readonly LocalCustomFactory<TKey> LocalFactory = new LocalCustomFactory<TKey>();
 
         #endregion
 
@@ -28,22 +24,7 @@ namespace Trollveggen
         /// <returns>The object</returns>
         public static T Resolve<T>(TKey key)
         {
-            lock (Registry)
-            {
-                if (!Registry.ContainsKey(typeof(T)))
-                {
-                    return default(T);
-                }
-
-                var registeredTs = Registry[typeof(T)];
-                if (!registeredTs.ContainsKey(key))
-                {
-                    return default(T);
-                }
-
-                var r = registeredTs[key];
-                return (T)r;
-            }
+            return LocalFactory.Resolve<T>(key);
         }
 
         /// <summary>
@@ -54,14 +35,7 @@ namespace Trollveggen
         /// <param name="key">The key associated with the object</param>
         public static void Register<T>(T obj, TKey key)
         {
-            lock (Registry)
-            {
-                if (!Registry.ContainsKey(typeof (T)))
-                {
-                    Registry.Add(typeof(T), new Dictionary<TKey, object>());
-                }
-                Registry[typeof(T)][key] = obj;
-            }
+            LocalFactory.Register(obj, key);
         }
 
         /// <summary>
@@ -70,15 +44,7 @@ namespace Trollveggen
         /// <typeparam name="T">The type the object is of or implements</typeparam>
         public static void Release<T>()
         {
-            lock (Registry)
-            {
-                if (!Registry.ContainsKey(typeof(T)))
-                {
-                    return;
-                }
-                Registry[typeof(T)].Clear();
-                Registry.Remove(typeof (T));
-            }
+            LocalFactory.Release<T>();
         }
 
         /// <summary>
@@ -88,18 +54,7 @@ namespace Trollveggen
         /// <param name="key">The key associated with the object</param>
         public static void Release<T>(TKey key)
         {
-            lock (Registry)
-            {
-                if (!Registry.ContainsKey(typeof (T)))
-                {
-                    return;
-                }
-                Registry[typeof(T)].Remove(key);
-                if (Registry[typeof(T)].Count == 0)
-                {
-                    Registry.Remove(typeof(T));
-                }
-            }
+            LocalFactory.Release<T>(key);
         }
 
         #endregion
